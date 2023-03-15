@@ -48,7 +48,8 @@ class BudgetService:
         budgets = budget_repo.get_all()
         if self.is_valid(start_dt, end_dt):
             if self.is_cross_month(start_dt, end_dt):
-                print()
+                # month_days = calendar.monthrange(start_dt.year, start_dt.month)[1]
+                # print()
             else:
                 if self.is_whole_month(start_dt, end_dt):
                    return self.get_budget(start_dt, budgets)
@@ -57,5 +58,4 @@ class BudgetService:
                     month_days = calendar.monthrange(start_dt.year, start_dt.month)[1]
                     return self.get_budget(start_dt, budgets) * partial_days / month_days
         return 0.0
-
 
