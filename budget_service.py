@@ -37,6 +37,12 @@ class BudgetService:
             return True
         return False
 
+    def get_budget(self, start_dt, budgets):
+        for b in budgets:
+            if start_dt.strftime("%Y%m") == b.year_month:
+                return (b.amount or 0)
+        return 0
+
     def query(self, start_dt, end_dt) -> float:
         budget_repo = BudgetRepo()
         budgets = budget_repo.get_all()
@@ -45,10 +51,11 @@ class BudgetService:
                 print()
             else:
                 if self.is_whole_month(start_dt, end_dt):
-                   for b in budgets:
-                        print(start_dt.strftime("%Y%m"), b.year_month)
-                        if start_dt.strftime("%Y%m") == b.year_month:
-                            return (b.amount or 0)
-                return 0.0
+                   return self.get_budget(start_dt, budgets)
+                else:
+                    partial_days = (end_dt - start_dt).days + 1
+                    month_days = calendar.monthrange(start_dt.year, start_dt.month)[1]
+                    return self.get_budget(start_dt, budgets) * partial_days / month_days
+        return 0.0
 
 

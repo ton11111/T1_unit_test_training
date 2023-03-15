@@ -18,16 +18,21 @@ class MyTestCase(unittest.TestCase):
     def test_budget_is_invalid(self):
         assert self.budgetService.is_valid(datetime.date(2023, 1, 2), datetime.date(2023, 1, 1)) is False
 
-    def test_budget_is_whole_month(self):
-        assert self.budgetService.is_whole_month(datetime.date(2023, 1, 1), datetime.date(2023, 1, 31)) is True
+    # def test_budget_is_whole_month(self):
+    #     assert self.budgetService.is_whole_month(datetime.date(2023, 1, 1), datetime.date(2023, 1, 31)) is True
 
     def test_budget_is_empty_data(self):
         self.fake_get_all_patcher.return_value = []
         assert self.budgetService.query(datetime.date(2023, 1, 1), datetime.date(2023, 1, 31)) == 0
 
-    def test_budget_is_valid(self):
+    def test_budget_is_whole_month(self):
         self.fake_get_all_patcher.return_value = [Budget('202301', 310)]
         assert self.budgetService.query(datetime.date(2023, 1, 1), datetime.date(2023, 1, 31)) == 310
+
+    def test_budget_is_partial_month(self):
+        self.fake_get_all_patcher.return_value = [Budget('202301', 310)]
+        assert self.budgetService.query(datetime.date(2023, 1, 1), datetime.date(2023, 1, 10)) == 100
+
 
 if __name__ == '__main__':
     unittest.main()
