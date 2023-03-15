@@ -32,11 +32,23 @@ class BudgetService:
     def is_valid(self, start_dt, end_dt):
         return end_dt > start_dt
 
-    def query(self, start_dt, end_dt) -> float:
-        if self.is_valid(start_dt, end_dt):
-            return 0.0
+    def is_cross_month(self, start_dt, end_dt):
+        if start_dt.year != end_dt.year or start_dt.month != end_dt.month:
+            return True
+        return False
 
+    def query(self, start_dt, end_dt) -> float:
         budget_repo = BudgetRepo()
         budgets = budget_repo.get_all()
+        if self.is_valid(start_dt, end_dt):
+            if self.is_cross_month(start_dt, end_dt):
+                print()
+            else:
+                if self.is_whole_month(start_dt, end_dt):
+                   for b in budgets:
+                        print(start_dt.strftime("%Y%m"), b.year_month)
+                        if start_dt.strftime("%Y%m") == b.year_month:
+                            return (b.amount or 0)
+                return 0.0
 
-        budgets
+
